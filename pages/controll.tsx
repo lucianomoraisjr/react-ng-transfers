@@ -1,5 +1,5 @@
 
-import { Flex, HStack, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Tag, TagRightIcon, TagLabel, Heading, useDisclosure, Button,  Modal } from '@chakra-ui/react'
+import { Flex, HStack, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Tag, TagRightIcon, TagLabel, Heading, useDisclosure, Button, Modal } from '@chakra-ui/react'
 import { MdAdd } from 'react-icons/md'
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
@@ -25,6 +25,9 @@ export default function Home() {
     const [page, setPage] = useState<number>(1)
     const [totalTransaction, setTotalTransaction] = useState<number>(1)
     const [loading, setLoadin] = useState(true)
+    const [autorizationTable, setAutorizationTable] = useState(false)
+    const [type, settype] = useState<'cash-out' | 'cash-in'>()
+    const [balance, setBalance] = useState(userLocal?.balance)
     useEffect(() => { routerMe() }, [])
     useEffect(() => { handleGetTransactions() }, [page])
 
@@ -33,23 +36,28 @@ export default function Home() {
 
     async function handleGetTransactions() {
         console.log(page)
-        await api.get<[list: Table, cont: number]>(`search?page=${page}`).catch((e) => {
+        await api.get<[list: Table, cont: number, balance?: number]>(`search?page=${page}&type=${type}`).catch((e) => {
             console.log(e)
         }).then((response) => {
             if (response) {
-                const [list, cont] = response.data
-                const table = list.map((key) => {
-                    let data = new Date(key.date),
-                        dia = data.getDate().toString(),
-                        diaF = (dia.length == 1) ? '0' + dia : dia,
-                        mes = (data.getMonth() + 1).toString(), //+1 pois no getMonth Janeiro começa com zero.
-                        mesF = (mes.length == 1) ? '0' + mes : mes,
-                        anoF = data.getFullYear();
-                    key.date = diaF + "/" + mesF + "/" + anoF
-                    return key
-                })
-                setTable(table)
-                setTotalTransaction(cont)
+                const [list, cont, balance] = response.data
+                if (balance) setBalance(balance)
+                if (list.length > 0) {
+                    const table = list.map((key) => {
+                        let data = new Date(key.date),
+                            dia = data.getDate().toString(),
+                            diaF = (dia.length == 1) ? '0' + dia : dia,
+                            mes = (data.getMonth() + 1).toString(), //+1 pois no getMonth Janeiro começa com zero.
+                            mesF = (mes.length == 1) ? '0' + mes : mes,
+                            anoF = data.getFullYear();
+                        key.date = diaF + "/" + mesF + "/" + anoF
+                        return key
+                    })
+                    setTable(table)
+                    setTotalTransaction(cont)
+                    setAutorizationTable(true)
+                }
+
                 setLoadin(false)
             }
 
@@ -64,7 +72,7 @@ export default function Home() {
                     <HStack spacing={4}>
                         <Heading fontSize='3xl' >Saldo:</Heading>
                         <Tag size='lg' variant='subtle' colorScheme='green'>
-                            <TagLabel>{userLocal?.balance}</TagLabel>
+                            <TagLabel>{balance}</TagLabel>
                             <TagRightIcon boxSize='12px' as={MdAdd} />
                         </Tag>
 
@@ -76,47 +84,50 @@ export default function Home() {
                         isOpen={isOpen}
                         onClose={onClose}
                     >
-                    <ModalSend onClose={onClose} />
+                        <ModalSend handleGetTransactions={handleGetTransactions} onClose={onClose} />
                     </Modal>
-                    <TableContainer>
-                        <Table size='sm'>
-                            <Thead>
-                                <Tr >
-                                    <Th>Usuario</Th>
-                                    <Th>Natureza</Th>
-                                    <Th isNumeric>Valor</Th>
-                                    <Th isNumeric>Data</Th>
-                                </Tr>
-                            </Thead>
-
-                            <Tbody>
-                                {table?.map((key, index) => (
-
-
-                                    <Tr key={index}>
-                                        <Td>{key.username}</Td>
-                                        <Td>{key.type}</Td>
-                                        <Td isNumeric>{key.value}</Td>
-                                        <Td isNumeric>
-                                            {key.date}
-
-                                        </Td>
+                    {autorizationTable &&
+                        <TableContainer>
+                            <Table size='sm'>
+                                <Thead>
+                                    <Tr >
+                                        <Th>Usuário</Th>
+                                        <Th>Natureza</Th>
+                                        <Th isNumeric>Valor</Th>
+                                        <Th isNumeric>Data</Th>
                                     </Tr>
+                                </Thead>
 
-                                ))}
+                                <Tbody>
+                                    {table?.map((key, index) => (
 
 
-                            </Tbody>
+                                        <Tr key={index}>
+                                            <Td>{key.username}</Td>
+                                            <Td>{key.type}</Td>
+                                            <Td isNumeric>{key.value}</Td>
+                                            <Td isNumeric>
+                                                {key.date}
 
-                            <Tfoot>
+                                            </Td>
+                                        </Tr>
 
-                            </Tfoot>
+                                    ))}
 
-                        </Table>
-                        <Pagination totalCountOfRegisters={totalTransaction}
-                            onPageChange={setPage}
-                            currentPage={page} />
-                    </TableContainer>
+
+                                </Tbody>
+
+                                <Tfoot>
+
+                                </Tfoot>
+
+                            </Table>
+                            <Pagination totalCountOfRegisters={totalTransaction}
+                                onPageChange={setPage}
+                                currentPage={page} />
+                        </TableContainer>
+                    }
+
 
                 </>
             }
