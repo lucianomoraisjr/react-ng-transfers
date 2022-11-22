@@ -1,11 +1,12 @@
 
-import { Flex, HStack, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Tag, TagRightIcon, TagLabel, Heading, useDisclosure, Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from '@chakra-ui/react'
+import { Flex, HStack, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Tag, TagRightIcon, TagLabel, Heading, useDisclosure, Button,  Modal } from '@chakra-ui/react'
 import { MdAdd } from 'react-icons/md'
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
 import { AuthContex } from 'contexts/AuthContext'
 import { api } from 'service/api'
 import { Pagination } from '@/components/Pagination'
+import { ModalSend } from '@/components/ModalSend'
 
 
 type Table = {
@@ -75,29 +76,7 @@ export default function Home() {
                         isOpen={isOpen}
                         onClose={onClose}
                     >
-                        <ModalOverlay />
-                        <ModalContent>
-                            <ModalHeader>Create your account</ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody pb={6}>
-                                <FormControl>
-                                    <FormLabel>First name</FormLabel>
-                                    <Input ref={initialRef} placeholder='First name' />
-                                </FormControl>
-
-                                <FormControl mt={4}>
-                                    <FormLabel>Last name</FormLabel>
-                                    <Input placeholder='Last name' />
-                                </FormControl>
-                            </ModalBody>
-
-                            <ModalFooter>
-                                <Button colorScheme='blue' mr={3}>
-                                    Save
-                                </Button>
-                                <Button onClick={onClose}>Cancel</Button>
-                            </ModalFooter>
-                        </ModalContent>
+                    <ModalSend onClose={onClose} />
                     </Modal>
                     <TableContainer>
                         <Table size='sm'>
