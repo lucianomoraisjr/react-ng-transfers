@@ -14,12 +14,22 @@ import {
     useColorModeValue,
 } from '@chakra-ui/react'
 import * as React from 'react'
+import { useState } from 'react'
 
 
 import { PasswordField } from '../components/PasswordField'
 
 
 export default function Home() {
+    const [username, setUsername] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+    const [passwordConfirmation, setPasswordConfirmation] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false)
+
+    function handleCheckPassword() {
+
+    }
+
     return (
         <Container maxW="lg" py={{ base: '12', md: '24' }} px={{ base: '0', sm: '8' }}>
             <Stack spacing="8">
@@ -47,11 +57,11 @@ export default function Home() {
                     <Stack spacing="6">
                         <Stack spacing="5">
                             <FormControl>
-                                <FormLabel htmlFor="email">User Name</FormLabel>
-                                <Input id="email" type="email" />
+                                <FormLabel htmlFor="text">User Name</FormLabel>
+                                <Input id="username"  onChange={(e=>setUsername(username))} value={username} type="text" />
                             </FormControl>
-                            <PasswordField />
-                            <PasswordField />
+                            <PasswordField   onChange={(e=>setUsername(password))} value={password}/>
+                            <PasswordField   onChange={(e=>setUsername(passwordConfirmation))} value={passwordConfirmation}/>
                         </Stack>
                         <Stack spacing="6">
                             <Button colorScheme='blackAlpha' bg='black'>Create account</Button>

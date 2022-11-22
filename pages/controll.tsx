@@ -1,5 +1,6 @@
 
-import { Flex, HStack, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Tag, TagRightIcon, TagLabel, Heading, useDisclosure, Button, Modal } from '@chakra-ui/react'
+import { Flex, HStack, Table, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Tag, TagRightIcon, TagLabel, Heading, useDisclosure, Button, Modal, Select } from '@chakra-ui/react'
+import { Menu, MenuButton, MenuList, MenuItemOption } from "@chakra-ui/react"
 import { MdAdd } from 'react-icons/md'
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
@@ -26,16 +27,14 @@ export default function Home() {
     const [totalTransaction, setTotalTransaction] = useState<number>(1)
     const [loading, setLoadin] = useState(true)
     const [autorizationTable, setAutorizationTable] = useState(false)
-    const [type, settype] = useState<'cash-out' | 'cash-in'>()
+    const [type, setType] = useState<'cash-out' | 'cash-in'>()
     const [balance, setBalance] = useState(userLocal?.balance)
     useEffect(() => { routerMe() }, [])
-    useEffect(() => { handleGetTransactions() }, [page])
-
-
-
+    useEffect(() => { handleGetTransactions() }, [page,type])
+    
 
     async function handleGetTransactions() {
-        console.log(page)
+        
         await api.get<[list: Table, cont: number, balance?: number]>(`search?page=${page}&type=${type}`).catch((e) => {
             console.log(e)
         }).then((response) => {
@@ -57,11 +56,8 @@ export default function Home() {
                     setTotalTransaction(cont)
                     setAutorizationTable(true)
                 }
-
                 setLoadin(false)
             }
-
-
         })
     }
     return (
@@ -88,6 +84,20 @@ export default function Home() {
                     </Modal>
                     {autorizationTable &&
                         <TableContainer>
+                            <Menu >
+                                <MenuButton h='33px' fontSize='15px' mr='10px' bg='black' color='white' as={Button}
+                                    _hover={{
+                                        bg: '#888B91'
+                                    }}
+                                >
+                                    Tipo
+                                </MenuButton>
+                                <MenuList bg='black' h='auto'>
+                                    <MenuItemOption bg='black' onClick={()=>setType(undefined)} color="white">Todas</MenuItemOption>
+                                    <MenuItemOption bg='black' onClick={()=>setType('cash-in')} color="white">cash-in</MenuItemOption>
+                                    <MenuItemOption bg='black' onClick={()=>setType('cash-out')} color="white">cash-out</MenuItemOption>
+                                </MenuList>
+                            </Menu>
                             <Table size='sm'>
                                 <Thead>
                                     <Tr >
@@ -100,8 +110,6 @@ export default function Home() {
 
                                 <Tbody>
                                     {table?.map((key, index) => (
-
-
                                         <Tr key={index}>
                                             <Td>{key.username}</Td>
                                             <Td>{key.type}</Td>
@@ -113,8 +121,6 @@ export default function Home() {
                                         </Tr>
 
                                     ))}
-
-
                                 </Tbody>
 
                                 <Tfoot>
