@@ -1,65 +1,88 @@
-import Head from 'next/head'
-import Image from 'next/image'
 
-import styles from '@/pages/index.module.css'
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Heading,
+  HStack,
+  Input,
+  Stack,
+  Text,
+  useBreakpointValue,
+  useColorModeValue,
+} from '@chakra-ui/react'
+import { AuthContex } from 'contexts/AuthContext'
+import * as React from 'react'
+import { FormEvent, useContext, useState } from 'react'
+import { PasswordField } from '../components/PasswordField'
 
-export default function Home() {
+
+export default function Login() {
+  const [username, setUsername] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
+  const { signIn } = useContext(AuthContex)
+
+
+
+  async function handleLogin(e: FormEvent<HTMLDivElement>) {
+    e.preventDefault()
+    setLoading(true)
+    setTimeout(async function () {
+      await signIn({ password, username })
+      setLoading(false)
+    }, 700)
+
+
+  }
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a href="https://vercel.com/new" className={styles.card}>
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+    <Container maxW="lg" py={{ base: '12', md: '24' }} px={{ base: '0', sm: '8' }}>
+      <Stack spacing="8">
+        <Stack spacing="6" textAlign='center'>
+          <Heading>N.G Cash</Heading>
+          <Stack spacing={{ base: '2', md: '3' }} textAlign="center">
+            <Heading size={useBreakpointValue({ base: 'xs', md: 'sm' })}>
+              Log in to your account
+            </Heading>
+            <HStack spacing="1" justify="center">
+              <Text color="muted">Don't have an account?</Text>
+              <Button variant="link" colorScheme="blue">
+                Sign up
+              </Button>
+            </HStack>
+          </Stack>
+        </Stack>
+        <Box
+          py={{ base: '0', sm: '8' }}
+          px={{ base: '4', sm: '10' }}
+          bg={useBreakpointValue({ base: 'transparent', sm: 'bg-surface' })}
+          boxShadow={{ base: 'none', sm: useColorModeValue('md', 'md-dark') }}
+          borderRadius={{ base: 'none', sm: 'xl' }}
         >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
-    </div>
+          <Stack spacing="6" >
+            
+            <Stack spacing="5">
+              <FormControl >
+                <FormLabel htmlFor="text">username</FormLabel>
+                <Input id="username"
+                  onChange={e => setUsername(e.target.value)}
+                  type="username" />
+              </FormControl>
+              <PasswordField onChange={e => setPassword(e.target.value)} />
+            </Stack>
+            <Stack spacing="6">
+              <Button
+              onClick={e => handleLogin(e)}
+               type='submit'
+                colorScheme='blackAlpha' bg='black'>Sign in</Button>
+                
+            </Stack>
+          
+          </Stack>
+        </Box>
+      </Stack>
+    </Container>
   )
 }
