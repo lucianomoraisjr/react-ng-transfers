@@ -1,5 +1,6 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { AuthContex } from "contexts/AuthContext";
+import { useContext, useEffect, useState } from "react";
 import { api } from "service/api";
 
 interface ModalProps {
@@ -17,6 +18,7 @@ export function ModalSend({ onClose, handleGetTransactions }: ModalProps) {
     const [value, setValue] = useState<string>("")
     const [msg, setMsg] = useState<string>()
     const [msgForm, setMsgForm] = useState<MsgFrom>()
+    const { userLocal } = useContext(AuthContex)
 
     useEffect(() => {
         setUsername("")
@@ -31,6 +33,10 @@ export function ModalSend({ onClose, handleGetTransactions }: ModalProps) {
     function handleCheckUsername(): boolean {
         if (username == "") {
             setMsgForm({ ...msgForm, username: "Informe o nome do usuário" })
+            return false
+        }
+        if (username==userLocal?.username ) {
+            setMsgForm({ ...msgForm, username: "Não pode  fazer transferência para si mesmo" })
             return false
         }
         return true
@@ -84,7 +90,7 @@ export function ModalSend({ onClose, handleGetTransactions }: ModalProps) {
                 <ModalBody pb={6}>
 
                     {msg ? <>
-                        <Heading>{msg}</Heading>
+                        <Heading fontSize='2xl'>{msg}</Heading>
                         <ModalFooter>
                             <Button onClick={() => { setUsername(""), setMsg(undefined), setValue("") }} colorScheme='blue' mr={3}>
                              {msg=="Transferência Enviada" ?<>Nova Transferência</> : <>Tentar novamente</>}

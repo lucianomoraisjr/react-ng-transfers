@@ -41,8 +41,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     function routerMe() {
             api.get('/me').then(function (response) {
                 const user = response.data
-                
-                setUserLocal({
+                console.log(user.account.balance)
+                setUserLocal({  
                    username:user.username,
                    balance:user.account.balance
                 })
@@ -76,10 +76,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             })
             api.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
             Router.push('/controll')
-
-        }).catch(function (e) {
-
-            singnLogout()
 
         })
 

@@ -25,8 +25,8 @@ export const PasswordField = React.forwardRef<HTMLInputElement, InputProps>((pro
   }
 
   return (
-    <FormControl>
-      <FormLabel htmlFor="password">Password</FormLabel>
+    <>
+      <FormLabel htmlFor="password">{props.name}</FormLabel>
       <InputGroup>
         <InputRightElement>
           <IconButton
@@ -46,7 +46,7 @@ export const PasswordField = React.forwardRef<HTMLInputElement, InputProps>((pro
           {...props}
         />
       </InputGroup>
-    </FormControl>
+    </>
   )
 })
 

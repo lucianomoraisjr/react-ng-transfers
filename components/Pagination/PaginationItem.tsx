@@ -13,10 +13,10 @@ export function PaginationItem({isCuttent,number,onPageChange}:PaginationItemPro
             <Button size="sm"
             fontSize="xs"
             width="4"
-            colorScheme="red"
+            colorScheme="purple"
             disabled
             _disabled={{
-                bgColor: "red.600",
+                bgColor: "purple.600",
                 cursor: 'default'
             }}
         >{number}</Button>
